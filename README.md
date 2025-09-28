@@ -1,2 +1,2 @@
-# MLOPS--spam-detection-with-the-help-of-dvc-and-aws-pipeline2
-we learn how will dvc work stepby step
+# YT-MLOPS-Complete-ML-Pipeline
+This project covers the end to end understanding for creating an ML pipeline and working around it using DVC for experiment tracking and data versioning(using AWS S3)
