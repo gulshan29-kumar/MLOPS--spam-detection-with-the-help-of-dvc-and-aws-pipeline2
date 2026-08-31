@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spam Detector Dashboard</title>
+    <!-- Outfit Font family from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="glow-bg"></div>
+    <div class="app-container">
+        <header>
+            <h1>Spam Shield <span>AI</span></h1>
+            <p class="subtitle">Deploying machine learning to defend your inbox in real-time</p>
+        </header>
+
+        <main class="dashboard-card">
+            <section class="stage-input">
+                <label for="message-input">Message to Analyze</label>
+                <div class="textarea-wrapper">
+                    <textarea id="message-input" placeholder="Type or paste your SMS or Email text here to classify..." maxlength="1000"></textarea>
+                    <div class="char-count"><span id="chars">0</span>/1000</div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button id="clear-btn" class="btn btn-secondary">Clear</button>
+                    <button id="analyze-btn" class="btn btn-primary">
+                        <span>Analyze Message</span>
+                        <div class="spinner" id="btn-spinner"></div>
+                    </button>
+                </div>
+            </section>
+
+            <section class="stage-results" id="results-panel" style="display: none;">
+                <div class="divider"></div>
+                <h2>Classification Results</h2>
+                
+                <div class="badge-container">
+                    <div id="prediction-badge" class="result-badge">---</div>
+                </div>
+
+                <div class="details-grid">
+                    <div class="detail-box">
+                        <span class="detail-title">Classifier Outcome</span>
+                        <p id="outcome-desc" class="detail-val">Waiting for analyze...</p>
+                    </div>
+                </div>
+
+                <div class="tokens-box">
+                    <span class="detail-title">Extracted NLP Tokens (Stemmed)</span>
+                    <div id="preprocessed-tokens" class="tokens-list">
+                        <!-- Tokens will go here dynamically -->
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>MLOps pipeline orchestrated with DVC, Scikit-Learn, and FastAPI on Vercel</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

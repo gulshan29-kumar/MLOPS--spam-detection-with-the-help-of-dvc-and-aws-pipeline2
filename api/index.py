@@ -42,6 +42,7 @@ class MessageRequest(BaseModel):
     text: str
 
 @app.post("/predict")
+@app.post("/api/predict")
 def predict(request: MessageRequest):
     try:
         cleaned = clean_input_text(request.text)
@@ -52,6 +53,7 @@ def predict(request: MessageRequest):
         return {
             "prediction": label,
             "label_code": prediction,
+            "cleaned_text": cleaned,
             "success": True
         }
     except Exception as e:
