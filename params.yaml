@@ -1,9 +1,14 @@
+# Parameters for the Spam Detection Machine Learning Pipeline
+
+# Ingestion configuration settings
 data_ingestion:
-  test_size: 0.20
+  test_size: 0.20 # Split ratio for test dataset
 
+# Feature extraction vectorization settings
 feature_engineering:
-  max_features: 35
+  max_features: 35 # Top TF-IDF term vocab dimension limit
 
+# Estimator training hyperparameters
 model_building:
-  n_estimators: 22
-  random_state: 2
+  n_estimators: 22 # Number of trees in the Random Forest
+  random_state: 2 # Seed for reproducible splitting and bagging
