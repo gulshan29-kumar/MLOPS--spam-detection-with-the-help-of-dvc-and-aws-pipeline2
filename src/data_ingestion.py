@@ -59,21 +59,36 @@ def load_data(data_url: str) -> pd.DataFrame:
         raise RuntimeError(f"Error loading CSV data: {e}")
 
 def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
-    """Preprocess the data."""
+    """
+    Standardize DataFrame schema by removing unnecessary columns and renaming key variables.
+    
+    Args:
+        df (pd.DataFrame): Raw ingested DataFrame.
+        
+    Returns:
+        pd.DataFrame: Preprocessed DataFrame containing 'target' and 'text'.
+    """
     try:
         df.drop(columns = ['Unnamed: 2', 'Unnamed: 3', 'Unnamed: 4'], inplace = True)
         df.rename(columns = {'v1': 'target', 'v2': 'text'}, inplace = True)
         logger.debug('Data preprocessing completed')
         return df
     except KeyError as e:
-        logger.error('Missing column in the dataframe: %s', e)
-        raise
+        logger.error('Missing target or text column in the dataframe: %s', e)
+        raise KeyError(f"Expected columns v1/v2 or drop structure was not met: {e}")
     except Exception as e:
         logger.error('Unexpected error during preprocessing: %s', e)
         raise
 
 def save_data(train_data: pd.DataFrame, test_data: pd.DataFrame, data_path: str) -> None:
-    """Save the train and test datasets."""
+    """
+    Export training and test splits into CSV format in the raw data directory.
+    
+    Args:
+        train_data (pd.DataFrame): training split DataFrame.
+        test_data (pd.DataFrame): test split DataFrame.
+        data_path (str): base destination directory path.
+    """
     try:
         raw_data_path = os.path.join(data_path, 'raw')
         os.makedirs(raw_data_path, exist_ok=True)
@@ -81,10 +96,13 @@ def save_data(train_data: pd.DataFrame, test_data: pd.DataFrame, data_path: str)
         test_data.to_csv(os.path.join(raw_data_path, "test.csv"), index=False)
         logger.debug('Train and test data saved to %s', raw_data_path)
     except Exception as e:
-        logger.error('Unexpected error occurred while saving the data: %s', e)
+        logger.error('Unexpected error occurred while saving the data split: %s', e)
         raise
 
-def main():
+def main() -> None:
+    """
+    Coordinates data ingestion by loading raw data, cleaning schema, splitting datasets, and saving results.
+    """
     try:
         params = load_params(params_path='params.yaml')
         test_size = params['data_ingestion']['test_size']
