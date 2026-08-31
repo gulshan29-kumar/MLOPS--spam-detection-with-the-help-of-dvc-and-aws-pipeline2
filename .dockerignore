@@ -1,0 +1,29 @@
+# Skip python cache files
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Skip local logs and runs
+logs/
+dvclive/
+.dvc/cache/
+.dvc/tmp/
+
+# Skip local experimental data and model binaries
+data/raw/
+data/interim/
+data/processed/
+models/*.pkl
+reports/
+
+# Skip environment directories and VS code settings
+.venv/
+env/
+venv/
+.vscode/
+.git/
+.gitignore
+.github/
+.dvcignore
+projectflow.txt
