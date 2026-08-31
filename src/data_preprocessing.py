@@ -6,12 +6,30 @@ from nltk.stem.porter import PorterStemmer
 from nltk.corpus import stopwords
 import string
 import nltk
+import yaml
 nltk.download('stopwords')
 nltk.download('punkt')
 
 # Ensure the "logs" directory exists
 log_dir = 'logs'
 os.makedirs(log_dir, exist_ok=True)
+
+def load_params(params_path: str) -> dict:
+    """Load parameters from a YAML file."""
+    try:
+        with open(params_path, 'r') as file:
+            params = yaml.safe_load(file)
+        logger.debug('Parameters retrieved from %s', params_path)
+        return params
+    except FileNotFoundError:
+        logger.error('Parameters file not found: %s', params_path)
+        raise FileNotFoundError(f"Configuration file {params_path} could not be located.")
+    except yaml.YAMLError as e:
+        logger.error('YAML error: %s', e)
+        raise ValueError(f"Invalid YAML config file format: {e}")
+    except Exception as e:
+        logger.error('Unexpected error: %s', e)
+        raise e
 
 # Setting up logger
 logger = logging.getLogger('data_preprocessing')
@@ -31,32 +49,35 @@ file_handler.setFormatter(formatter)
 logger.addHandler(console_handler)
 logger.addHandler(file_handler)
 
-def transform_text(text: str) -> str:
+def transform_text(text: str, lowercase: bool = True, stopwords_lang: str = 'english') -> str:
     """
     Transforms the input text by converting it to lowercase, tokenizing, removing stopwords 
     and punctuation, and stemming using PorterStemmer.
     
     Args:
         text (str): Raw message clean text.
+        lowercase (bool): Whether to convert text to lower case. Defaults to True.
+        stopwords_lang (str): Stopwords language. Defaults to 'english'.
         
     Returns:
         str: Fully processed and stemmed text.
     """
     ps = PorterStemmer()
     # Convert to lowercase
-    text = text.lower()
+    if lowercase:
+        text = text.lower()
     # Tokenize the text
     text = nltk.word_tokenize(text)
     # Remove non-alphanumeric tokens
     text = [word for word in text if word.isalnum()]
     # Remove stopwords and punctuation
-    text = [word for word in text if word not in stopwords.words('english') and word not in string.punctuation]
+    text = [word for word in text if word not in stopwords.words(stopwords_lang) and word not in string.punctuation]
     # Stem the words
     text = [ps.stem(word) for word in text]
     # Join the tokens back into a single string
     return " ".join(text)
 
-def preprocess_df(df: pd.DataFrame, text_column: str = 'text', target_column: str = 'target') -> pd.DataFrame:
+def preprocess_df(df: pd.DataFrame, text_column: str = 'text', target_column: str = 'target', lowercase: bool = True, stopwords_lang: str = 'english') -> pd.DataFrame:
     """
     Preprocesses the DataFrame by encoding the target column, removing duplicates, 
     and transforming the text column.
@@ -65,6 +86,8 @@ def preprocess_df(df: pd.DataFrame, text_column: str = 'text', target_column: st
         df (pd.DataFrame): Input training or test split.
         text_column (str): Label for the input text feature. Defaults to 'text'.
         target_column (str): Target classification label. Defaults to 'target'.
+        lowercase (bool): Convert message text to lowercase. Defaults to True.
+        stopwords_lang (str): Stopwords language filter. Defaults to 'english'.
         
     Returns:
         pd.DataFrame: Transformed pandas DataFrame.
@@ -81,7 +104,7 @@ def preprocess_df(df: pd.DataFrame, text_column: str = 'text', target_column: st
         logger.debug('Duplicates removed')
         
         # Apply text transformation to the specified text column
-        df.loc[:, text_column] = df[text_column].apply(transform_text)
+        df.loc[:, text_column] = df[text_column].apply(lambda x: transform_text(x, lowercase, stopwords_lang))
         logger.debug('Text column transformed')
         return df
     
@@ -102,14 +125,19 @@ def main(text_column: str = 'text', target_column: str = 'target') -> None:
         target_column (str): Label of target column. Defaults to 'target'.
     """
     try:
+        # Load parameters
+        params = load_params('params.yaml').get('data_preprocessing', {})
+        lowercase = params.get('lowercase', True)
+        stopwords_lang = params.get('stopwords_lang', 'english')
+
         # Fetch the data from data/raw
         train_data = pd.read_csv('./data/raw/train.csv')
         test_data = pd.read_csv('./data/raw/test.csv')
         logger.debug('Data loaded properly')
 
         # Transform the data
-        train_processed_data = preprocess_df(train_data, text_column, target_column)
-        test_processed_data = preprocess_df(test_data, text_column, target_column)
+        train_processed_data = preprocess_df(train_data, text_column, target_column, lowercase, stopwords_lang)
+        test_processed_data = preprocess_df(test_data, text_column, target_column, lowercase, stopwords_lang)
 
         # Store the data inside data/processed
         data_path = os.path.join("./data", "interim")
