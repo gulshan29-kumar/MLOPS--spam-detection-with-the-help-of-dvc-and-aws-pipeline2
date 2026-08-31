@@ -41,4 +41,4 @@ def test_save_metrics(tmp_path):
     assert os.path.exists(file_path)
     with open(file_path, "r") as f:
         data = json.load(f)
-    assert data["metrics"] == 0.95 or data["accuracy"] == 0.95
+    assert data["accuracy"] == 0.95

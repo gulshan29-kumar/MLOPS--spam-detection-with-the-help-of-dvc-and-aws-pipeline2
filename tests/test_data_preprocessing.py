@@ -19,8 +19,8 @@ def test_transform_text():
 def test_transform_text_no_lowercase():
     # If lowercase is False
     result = transform_text("Running Fast", lowercase=False, stopwords_lang="english")
-    # 'Running' starts with caps, is not stopped
-    assert "Running" in result
+    # 'Running' starts with caps, is stemmed to lowercase by PorterStemmer
+    assert "run" in result
 
 def test_preprocess_df():
     # Create sample DataFrame
