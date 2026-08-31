@@ -47,8 +47,16 @@ def load_params(params_path: str) -> dict:
         logger.error('Unexpected error: %s', e)
         raise e
 
-def load_model(file_path: str):
-    """Load the trained model from a file."""
+def load_model(file_path: str) -> RandomForestClassifier:
+    """
+    Load the trained model classifier from a file.
+    
+    Args:
+        file_path (str): Path to pickle file.
+        
+    Returns:
+        RandomForestClassifier: Trained RandomForest classifier.
+    """
     try:
         with open(file_path, 'rb') as file:
             model = pickle.load(file)
@@ -62,7 +70,15 @@ def load_model(file_path: str):
         raise
 
 def load_data(file_path: str) -> pd.DataFrame:
-    """Load data from a CSV file."""
+    """
+    Load test features from a CSV file.
+    
+    Args:
+        file_path (str): Path of feature matrix.
+        
+    Returns:
+        pd.DataFrame: Loaded DataFrame.
+    """
     try:
         df = pd.read_csv(file_path)
         logger.debug('Data loaded from %s', file_path)
@@ -74,8 +90,18 @@ def load_data(file_path: str) -> pd.DataFrame:
         logger.error('Unexpected error occurred while loading the data: %s', e)
         raise
 
-def evaluate_model(clf, X_test: np.ndarray, y_test: np.ndarray) -> dict:
-    """Evaluate the model and return the evaluation metrics."""
+def evaluate_model(clf: RandomForestClassifier, X_test: np.ndarray, y_test: np.ndarray) -> dict[str, float]:
+    """
+    Evaluate the model classifier on target and prediction vectors.
+    
+    Args:
+        clf (RandomForestClassifier): Trained model instance.
+        X_test (np.ndarray): Test features.
+        y_test (np.ndarray): Ground truth labels.
+        
+    Returns:
+        dict[str, float]: Calculated accuracy, precision, recall, and AUC.
+    """
     try:
         y_pred = clf.predict(X_test)
         y_pred_proba = clf.predict_proba(X_test)[:, 1]
@@ -97,8 +123,14 @@ def evaluate_model(clf, X_test: np.ndarray, y_test: np.ndarray) -> dict:
         logger.error('Error during model evaluation: %s', e)
         raise
 
-def save_metrics(metrics: dict, file_path: str) -> None:
-    """Save the evaluation metrics to a JSON file."""
+def save_metrics(metrics: dict[str, float], file_path: str) -> None:
+    """
+    Save the evaluation metrics to a JSON file.
+    
+    Args:
+        metrics (dict[str, float]): Computed metric scores.
+        file_path (str): Destination file path.
+    """
     try:
         # Ensure the directory exists
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
@@ -110,7 +142,11 @@ def save_metrics(metrics: dict, file_path: str) -> None:
         logger.error('Error occurred while saving the metrics: %s', e)
         raise
 
-def main():
+def main() -> None:
+    """
+    Main evaluation pipeline coordination. Loads model, predicts on test features,
+    logs results to dvclive, and saves static reports.
+    """
     try:
         params = load_params(params_path='params.yaml')
         clf = load_model('./models/model.pkl')
