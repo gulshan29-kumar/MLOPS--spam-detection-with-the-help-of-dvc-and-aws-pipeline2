@@ -4,6 +4,11 @@
 data_ingestion:
   test_size: 0.20 # Split ratio for test dataset
 
+# Text preprocessing parameters
+data_preprocessing:
+  lowercase: true # Convert input text to lowercase
+  stopwords_lang: english # Stopword language to filter out
+
 # Feature extraction vectorization settings
 feature_engineering:
   max_features: 35 # Top TF-IDF term vocab dimension limit
