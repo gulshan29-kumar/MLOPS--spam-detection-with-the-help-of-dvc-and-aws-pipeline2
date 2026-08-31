@@ -9,8 +9,8 @@ from nltk.stem.porter import PorterStemmer
 from nltk.corpus import stopwords
 
 # Add the local directory to nltk data paths to prevent read-only filesystem download errors on Vercel
-nltk_data_dir = os.path.join(os.path.dirname(__file__), "..", "nltk_data")
-nltk.data.path.append(nltk_data_dir)
+nltk_data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "nltk_data"))
+nltk.data.path.insert(0, nltk_data_dir)
 
 app = FastAPI(title="Spam Detection API")
 
