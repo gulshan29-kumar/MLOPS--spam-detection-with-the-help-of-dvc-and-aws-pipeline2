@@ -77,7 +77,7 @@ def train_model(X_train: np.ndarray, y_train: np.ndarray, params: dict) -> Rando
     Args:
         X_train (np.ndarray): Training features representation.
         y_train (np.ndarray): Training target label vector.
-        params (dict): Hyperparameter config dictionary containing n_estimators and random_state.
+        params (dict): Hyperparameter config dictionary.
         
     Returns:
         RandomForestClassifier: Trained classifier model.
@@ -87,7 +87,12 @@ def train_model(X_train: np.ndarray, y_train: np.ndarray, params: dict) -> Rando
             raise ValueError("The number of samples in X_train and y_train must be the same.")
         
         logger.debug('Initializing RandomForest model with parameters: %s', params)
-        clf = RandomForestClassifier(n_estimators=params['n_estimators'], random_state=params['random_state'])
+        clf = RandomForestClassifier(
+            n_estimators=params['n_estimators'],
+            random_state=params['random_state'],
+            max_depth=params.get('max_depth'),
+            min_samples_split=params.get('min_samples_split', 2)
+        )
         
         logger.debug('Model training started with %d samples', X_train.shape[0])
         clf.fit(X_train, y_train)
