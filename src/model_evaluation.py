@@ -163,6 +163,7 @@ def main() -> None:
             live.log_metric('precision', metrics['precision'])
             live.log_metric('recall', metrics['recall'])
             live.log_metric('auc', metrics['auc'])
+            logger.info("Logged accuracy, precision, recall, and AUC metrics to dvclive")
 
             live.log_params(params)
         
