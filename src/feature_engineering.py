@@ -8,16 +8,16 @@ import yaml
 log_dir = 'logs'
 os.makedirs(log_dir, exist_ok=True)
 
-# logging configuration
+# logging configuration Setup
 logger = logging.getLogger('feature_engineering')
-logger.setLevel('DEBUG')
+logger.setLevel(logging.DEBUG)
 
 console_handler = logging.StreamHandler()
-console_handler.setLevel('DEBUG')
+console_handler.setLevel(logging.DEBUG)
 
 log_file_path = os.path.join(log_dir, 'feature_engineering.log')
-file_handler = logging.FileHandler(log_file_path)
-file_handler.setLevel('DEBUG')
+file_handler = logging.FileHandler(log_file_path, encoding='utf-8')
+file_handler.setLevel(logging.DEBUG)
 
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 console_handler.setFormatter(formatter)
@@ -34,14 +34,14 @@ def load_params(params_path: str) -> dict:
         logger.debug('Parameters retrieved from %s', params_path)
         return params
     except FileNotFoundError:
-        logger.error('File not found: %s', params_path)
-        raise
+        logger.error('Parameters file not found: %s', params_path)
+        raise FileNotFoundError(f"Configuration file {params_path} could not be located.")
     except yaml.YAMLError as e:
-        logger.error('YAML error: %s', e)
-        raise
+        logger.error('YAML parsing error: %s', e)
+        raise ValueError(f"Invalid YAML config file format: {e}")
     except Exception as e:
         logger.error('Unexpected error: %s', e)
-        raise
+        raise e
 
 def load_data(file_path: str) -> pd.DataFrame:
     """Load data from a CSV file."""
