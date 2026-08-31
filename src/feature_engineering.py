@@ -65,6 +65,8 @@ def load_data(file_path: str) -> pd.DataFrame:
         logger.error('Unexpected error occurred while loading the data: %s', e)
         raise
 
+import pickle
+
 def apply_tfidf(train_data: pd.DataFrame, test_data: pd.DataFrame, max_features: int) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     Perform TF-IDF feature extraction on training and test text columns.
@@ -87,6 +89,13 @@ def apply_tfidf(train_data: pd.DataFrame, test_data: pd.DataFrame, max_features:
 
         X_train_bow = vectorizer.fit_transform(X_train)
         X_test_bow = vectorizer.transform(X_test)
+
+        # Ensure models directory exists
+        os.makedirs(os.path.join(".", "models"), exist_ok=True)
+        vectorizer_path = os.path.join(".", "models", "vectorizer.pkl")
+        with open(vectorizer_path, 'wb') as file:
+            pickle.dump(vectorizer, file)
+        logger.debug('Fitted TfidfVectorizer saved to %s', vectorizer_path)
 
         train_df = pd.DataFrame(X_train_bow.toarray())
         train_df['label'] = y_train
