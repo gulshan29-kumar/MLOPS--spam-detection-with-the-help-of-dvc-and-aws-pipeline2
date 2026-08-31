@@ -31,9 +31,16 @@ file_handler.setFormatter(formatter)
 logger.addHandler(console_handler)
 logger.addHandler(file_handler)
 
-def transform_text(text):
+def transform_text(text: str) -> str:
     """
-    Transforms the input text by converting it to lowercase, tokenizing, removing stopwords and punctuation, and stemming.
+    Transforms the input text by converting it to lowercase, tokenizing, removing stopwords 
+    and punctuation, and stemming using PorterStemmer.
+    
+    Args:
+        text (str): Raw message clean text.
+        
+    Returns:
+        str: Fully processed and stemmed text.
     """
     ps = PorterStemmer()
     # Convert to lowercase
@@ -49,9 +56,18 @@ def transform_text(text):
     # Join the tokens back into a single string
     return " ".join(text)
 
-def preprocess_df(df, text_column='text', target_column='target'):
+def preprocess_df(df: pd.DataFrame, text_column: str = 'text', target_column: str = 'target') -> pd.DataFrame:
     """
-    Preprocesses the DataFrame by encoding the target column, removing duplicates, and transforming the text column.
+    Preprocesses the DataFrame by encoding the target column, removing duplicates, 
+    and transforming the text column.
+    
+    Args:
+        df (pd.DataFrame): Input training or test split.
+        text_column (str): Label for the input text feature. Defaults to 'text'.
+        target_column (str): Target classification label. Defaults to 'target'.
+        
+    Returns:
+        pd.DataFrame: Transformed pandas DataFrame.
     """
     try:
         logger.debug('Starting preprocessing for DataFrame')
@@ -71,14 +87,19 @@ def preprocess_df(df, text_column='text', target_column='target'):
     
     except KeyError as e:
         logger.error('Column not found: %s', e)
-        raise
+        raise KeyError(f"Expected column could not be found: {e}")
     except Exception as e:
         logger.error('Error during text normalization: %s', e)
         raise
 
-def main(text_column='text', target_column='target'):
+def main(text_column: str = 'text', target_column: str = 'target') -> None:
     """
-    Main function to load raw data, preprocess it, and save the processed data.
+    Main preprocessing routine. Load files from raw path, normalize text fields,
+    and save outputs into data/interim.
+    
+    Args:
+        text_column (str): Label of feature text column. Defaults to 'text'.
+        target_column (str): Label of target column. Defaults to 'target'.
     """
     try:
         # Fetch the data from data/raw
