@@ -15,14 +15,14 @@ os.makedirs(log_dir, exist_ok=True)
 
 # Setting up logger
 logger = logging.getLogger('data_preprocessing')
-logger.setLevel('DEBUG')
+logger.setLevel(logging.DEBUG)
 
 console_handler = logging.StreamHandler()
-console_handler.setLevel('DEBUG')
+console_handler.setLevel(logging.DEBUG)
 
 log_file_path = os.path.join(log_dir, 'data_preprocessing.log')
-file_handler = logging.FileHandler(log_file_path)
-file_handler.setLevel('DEBUG')
+file_handler = logging.FileHandler(log_file_path, encoding='utf-8')
+file_handler.setLevel(logging.DEBUG)
 
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 console_handler.setFormatter(formatter)
