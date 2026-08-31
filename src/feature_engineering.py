@@ -44,7 +44,15 @@ def load_params(params_path: str) -> dict:
         raise e
 
 def load_data(file_path: str) -> pd.DataFrame:
-    """Load data from a CSV file."""
+    """
+    Load data from a CSV file and substitute any missing values with empty strings.
+    
+    Args:
+        file_path (str): Path to local CSV file.
+        
+    Returns:
+        pd.DataFrame: Cleaned DataFrame.
+    """
     try:
         df = pd.read_csv(file_path)
         df.fillna('', inplace=True)
@@ -52,13 +60,23 @@ def load_data(file_path: str) -> pd.DataFrame:
         return df
     except pd.errors.ParserError as e:
         logger.error('Failed to parse the CSV file: %s', e)
-        raise
+        raise pd.errors.ParserError(f"Could not parse CSV at {file_path}: {e}")
     except Exception as e:
         logger.error('Unexpected error occurred while loading the data: %s', e)
         raise
 
-def apply_tfidf(train_data: pd.DataFrame, test_data: pd.DataFrame, max_features: int) -> tuple:
-    """Apply TfIdf to the data."""
+def apply_tfidf(train_data: pd.DataFrame, test_data: pd.DataFrame, max_features: int) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """
+    Perform TF-IDF feature extraction on training and test text columns.
+    
+    Args:
+        train_data (pd.DataFrame): Training set with 'text' and 'target' fields.
+        test_data (pd.DataFrame): Test set with 'text' and 'target' fields.
+        max_features (int): Top vocab feature count limit for TF-IDF.
+        
+    Returns:
+        tuple[pd.DataFrame, pd.DataFrame]: Extracted train and test feature matrices.
+    """
     try:
         vectorizer = TfidfVectorizer(max_features=max_features)
 
@@ -83,7 +101,13 @@ def apply_tfidf(train_data: pd.DataFrame, test_data: pd.DataFrame, max_features:
         raise
 
 def save_data(df: pd.DataFrame, file_path: str) -> None:
-    """Save the dataframe to a CSV file."""
+    """
+    Save the transformed feature dataframe to a CSV file.
+    
+    Args:
+        df (pd.DataFrame): Extracted feature matrix.
+        file_path (str): Destination file path.
+    """
     try:
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
         df.to_csv(file_path, index=False)
@@ -92,7 +116,11 @@ def save_data(df: pd.DataFrame, file_path: str) -> None:
         logger.error('Unexpected error occurred while saving the data: %s', e)
         raise
 
-def main():
+def main() -> None:
+    """
+    Main feature engineering stage execution. Loads preprocessed CSV files,
+    applies TF-IDF vectorization, and exports feature dataframes.
+    """
     try:
         params = load_params(params_path='params.yaml')
         max_features = params['feature_engineering']['max_features']
