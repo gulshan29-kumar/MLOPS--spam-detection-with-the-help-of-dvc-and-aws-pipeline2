@@ -7,9 +7,9 @@ import nltk
 from nltk.stem.porter import PorterStemmer
 from nltk.corpus import stopwords
 
-# Ensure NLTK data path and downloads exist inside serverless directories
-nltk.download('stopwords')
-nltk.download('punkt')
+# Add the local directory to nltk data paths to prevent read-only filesystem download errors on Vercel
+nltk_data_dir = os.path.join(os.path.dirname(__file__), "..", "nltk_data")
+nltk.data.path.append(nltk_data_dir)
 
 app = FastAPI(title="Spam Detection API")
 
