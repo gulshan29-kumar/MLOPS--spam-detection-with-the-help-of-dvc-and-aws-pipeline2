@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import HTMLResponse, Response
 from pydantic import BaseModel
 import pickle
 import os
@@ -60,8 +61,25 @@ def predict(request: MessageRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/")
-def index():
-    return {
-        "status": "online",
-        "description": "FastAPI Spam Classifier Serverless Endpoint for Vercel Deployment"
-    }
+def serve_index():
+    parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    index_path = os.path.join(parent_dir, "index.html")
+    with open(index_path, "r", encoding="utf-8") as f:
+        html_content = f.read()
+    return HTMLResponse(content=html_content, status_code=200)
+
+@app.get("/style.css")
+def serve_css():
+    parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    css_path = os.path.join(parent_dir, "style.css")
+    with open(css_path, "r", encoding="utf-8") as f:
+        css_content = f.read()
+    return Response(content=css_content, media_type="text/css")
+
+@app.get("/script.js")
+def serve_js():
+    parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    js_path = os.path.join(parent_dir, "script.js")
+    with open(js_path, "r", encoding="utf-8") as f:
+        js_content = f.read()
+    return Response(content=js_content, media_type="application/javascript")
