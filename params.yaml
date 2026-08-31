@@ -12,3 +12,5 @@ feature_engineering:
 model_building:
   n_estimators: 22 # Number of trees in the Random Forest
   random_state: 2 # Seed for reproducible splitting and bagging
+  max_depth: 15 # Maximum tree depth
+  min_samples_split: 5 # Minimum samples required to split an internal node
