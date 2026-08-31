@@ -12,6 +12,9 @@ stages:
     deps:
     - data/raw
     - src/data_preprocessing.py
+    params:
+    - data_preprocessing.lowercase
+    - data_preprocessing.stopwords_lang
     outs:
     - data/interim
   feature_engineering:
@@ -31,6 +34,8 @@ stages:
     params:
     - model_building.n_estimators
     - model_building.random_state
+    - model_building.max_depth
+    - model_building.min_samples_split
     outs:
     - models/model.pkl
   model_evaluation:
