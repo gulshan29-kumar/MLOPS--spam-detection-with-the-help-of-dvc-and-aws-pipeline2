@@ -50,8 +50,11 @@ def load_data(file_path: str) -> pd.DataFrame:
     """
     Load data from a CSV file.
     
-    :param file_path: Path to the CSV file
-    :return: Loaded DataFrame
+    Args:
+        file_path (str): Path to the CSV file.
+        
+    Returns:
+        pd.DataFrame: Loaded DataFrame.
     """
     try:
         df = pd.read_csv(file_path)
@@ -69,12 +72,15 @@ def load_data(file_path: str) -> pd.DataFrame:
 
 def train_model(X_train: np.ndarray, y_train: np.ndarray, params: dict) -> RandomForestClassifier:
     """
-    Train the RandomForest model.
+    Train the RandomForest classifier on the input matrices.
     
-    :param X_train: Training features
-    :param y_train: Training labels
-    :param params: Dictionary of hyperparameters
-    :return: Trained RandomForestClassifier
+    Args:
+        X_train (np.ndarray): Training features representation.
+        y_train (np.ndarray): Training target label vector.
+        params (dict): Hyperparameter config dictionary containing n_estimators and random_state.
+        
+    Returns:
+        RandomForestClassifier: Trained classifier model.
     """
     try:
         if X_train.shape[0] != y_train.shape[0]:
@@ -96,12 +102,13 @@ def train_model(X_train: np.ndarray, y_train: np.ndarray, params: dict) -> Rando
         raise
 
 
-def save_model(model, file_path: str) -> None:
+def save_model(model: RandomForestClassifier, file_path: str) -> None:
     """
-    Save the trained model to a file.
+    Save the trained classifier to disk using serialization.
     
-    :param model: Trained model object
-    :param file_path: Path to save the model file
+    Args:
+        model (RandomForestClassifier): Trained model instance.
+        file_path (str): Destination file path to dump pickle.
     """
     try:
         # Ensure the directory exists
@@ -117,7 +124,11 @@ def save_model(model, file_path: str) -> None:
         logger.error('Error occurred while saving the model: %s', e)
         raise
 
-def main():
+def main() -> None:
+    """
+    Main model training routine. Loads feature datasets, trains a
+    RandomForest classifier, and persists it.
+    """
     try:
         params = load_params('params.yaml')['model_building']
         train_data = load_data('./data/processed/train_tfidf.csv')
